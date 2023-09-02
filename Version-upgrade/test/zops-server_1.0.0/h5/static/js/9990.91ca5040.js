@@ -1,6 +1,0 @@
-/*!
- *  build: Vue  Admin Plus
- *  copyright: vue-admin-beautiful.com
- *  time: 2023-08-28 11:15:16
- */
-"use strict";(self["webpackChunkadmin_plus"]=self["webpackChunkadmin_plus"]||[]).push([[9990],{18907:function(t,n,e){e.d(n,{KW:function(){return o},Kj:function(){return h},Ld:function(){return d},Ob:function(){return f},Ox:function(){return m},Wh:function(){return s},XF:function(){return u},bm:function(){return c},uX:function(){return a},v0:function(){return i},y2:function(){return p}});var r=e(52806);function u(t){return(0,r.Z)({params:{method:"host.get",data:t}})}function a(t){return(0,r.Z)({params:{method:"host.exportinventory",data:t}})}function o(t){return(0,r.Z)({params:{method:"host.update",data:t}})}function d(t){return(0,r.Z)({params:{method:"host.create",data:t}})}function c(t){return(0,r.Z)({params:{method:"host.discoverupdate",data:t}})}function m(t){return(0,r.Z)({params:{method:"host.delete",data:t}})}function i(t){return(0,r.Z)({params:{method:"hostgroup.get",data:t}})}function s(t){return(0,r.Z)({params:{method:"modeltype.create",data:t}})}function f(t){return(0,r.Z)({params:{method:"modeltype.get",data:t}})}function p(t){return(0,r.Z)({params:{method:"modeltype.update",data:t}})}function h(t){return(0,r.Z)({params:{method:"modeltype.delete",data:t}})}}}]);
