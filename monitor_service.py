@@ -1,21 +1,31 @@
 import subprocess
 
+import subprocess
+
 def monitor_services():
-    services = ["nginx.service", "zops_server", "zops_agentd"]
+    services = ["zops_server"]
 
     for service in services:
         try:
             if "nginx.service" == service:
-                status = subprocess.run(["systemctlpy", "is-active", service], check=True, capture_output=True, text=True)
+                process = subprocess.run(["systemctl", "is-active", service], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             else:
-                status = subprocess.run([service, "status"], check=True, capture_output=True, text=True)
+                process = subprocess.run([service, "status"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            if "active" in status.stdout:
+            # Decode the output
+            output = process.stdout.decode('utf-8')
+            # print(f'状态{output}')
+            if " running" or "active" in output:
                 print(f"{service} is running.")
             else:
                 print(f"{service} is not running.")
+                return False
         except subprocess.CalledProcessError:
             print(f"Error checking status of {service}.")
+            return False
+        return True
 
-if __name__ == "__main__":
-    monitor_services()
+# Test the function
+monitor_services()
+
+

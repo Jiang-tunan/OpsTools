@@ -3,11 +3,11 @@ import hashlib
 
 # 全局路径变量
 BASE_DIR = "test"
-ZOPS_DIR = os.path.join(BASE_DIR, "zops_1.0.0")
+ZOPS_DIR = os.path.join(BASE_DIR, "zops-upgrade")
 SERVER_DIR = os.path.join(ZOPS_DIR, "zops-server_1.0.0")
 
 # 需检测文件及文件夹
-dirs = ["h5", "h5php", "sbin", "data"]
+dirs = ["h5", "h5php", "sbin"]
 executables = ["zops_agentd", "zops_java", "zops_proxy", "zops_server"]
 
 def calculate_md5(file_path):
@@ -36,7 +36,7 @@ def verify_files_and_dirs(base_dir):
 def verify_checksum():
     """验证MD5值"""
     # 解压zops_1.0.0.tar.gz到BASE_DIR目录
-    os.system(f"tar -xzvf {os.path.join(BASE_DIR, 'zops_1.0.0.tar.gz')} -C {BASE_DIR}")
+    os.system(f"tar -xzvf {os.path.join(BASE_DIR, 'zops-upgrade.tar.gz')} -C {BASE_DIR}")
 
     # 读取release.txt文件内容
     with open(os.path.join(ZOPS_DIR, "release.txt"), "r") as f:

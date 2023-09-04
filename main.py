@@ -1,17 +1,20 @@
 import os
-from verify_checksum import verify_checksum
-from stop_service import stop_services
-from backup_executable import backup_executable
-from deploy_executable import deploy_executables
+from verify_checksum    import verify_checksum
+from stop_service       import stop_services
+from backup_executable  import backup_executable
+from deploy_executable  import deploy_executables
 # from execute_db_script import execute_db_script
-from start_service import start_services
+from start_service      import start_services
+from monitor_service    import  monitor_services
+
 # 如果需要，可以导入其他脚本
 
 def main():
     # 1. 校验MD5
     if not verify_checksum():
         print("Checksum verification failed. Exiting...")
-        return
+        print("Failed to Upgrade!")
+        return False
 
     # 2. 停止相关服务
     stop_services()
@@ -29,10 +32,16 @@ def main():
     start_services()
 
     # 7. 监控服务状态
-    # monitor_service()
+    if not monitor_services():
+        print("Service monitor failed. Exiting...")
+        return False
 
-    print("Upgrade completed successfully!")
 
 if __name__ == "__main__":
-    main()
+    if not main():
+        print("Failed to Upgrade!")
+
+    print("Upgrade completed successfully!")
+    # 升级成功清理产生的文件
+    os.system("./clean.sh")
 

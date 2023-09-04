@@ -3,11 +3,11 @@ import subprocess
 
 def start_services():
     # 启动nginx服务
-    try:
-        subprocess.run(["systemctl", "start", "nginx.service"], check=True)
-        print("Nginx service started successfully.")
-    except subprocess.CalledProcessError:
-        print("Error starting Nginx service.")
+    # try:
+    #     subprocess.run(["systemctl", "start", "nginx.service"], check=True)
+    #     print("Nginx service started successfully.")
+    # except subprocess.CalledProcessError:
+    #     print("Error starting Nginx service.")
 
     # 启动zops_server
     try:

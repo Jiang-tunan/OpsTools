@@ -18,7 +18,7 @@ def stop_zops_service(service_name):
 
 def stop_services():
     # 停止nginx服务
-    stop_systemctl_service('nginx.service')
+    # stop_systemctl_service('nginx.service')
 
     # 停止zops_server和zops_agentd服务
     stop_zops_service('zops_server')
