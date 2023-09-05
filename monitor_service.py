@@ -1,6 +1,5 @@
 import subprocess
-
-import subprocess
+import logging
 
 def monitor_services():
     services = ["zops_server"]
@@ -14,18 +13,13 @@ def monitor_services():
 
             # Decode the output
             output = process.stdout.decode('utf-8')
-            # print(f'状态{output}')
+            # logging.info(f'状态{output}', extra={"code": "200"})
             if " running" or "active" in output:
-                print(f"{service} is running.")
+                logging.info(f"{service} 已运行..", extra={"code": "200"})
             else:
-                print(f"{service} is not running.")
+                logging.error(f"{service} 没有运行...", extra={"code": "500"})
                 return False
         except subprocess.CalledProcessError:
-            print(f"Error checking status of {service}.")
+            logging.error(f"检查 {service} 的状态时出错...", extra={"code": "500"})
             return False
-        return True
-
-# Test the function
-monitor_services()
-
-
+    return True

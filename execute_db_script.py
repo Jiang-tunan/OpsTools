@@ -29,4 +29,4 @@ for script in os.listdir(SCRIPT_DIR):
 cursor.close()
 connection.close()
 
-print("Database upgrade completed successfully!")
+logging.error("Database upgrade completed successfully!")

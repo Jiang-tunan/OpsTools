@@ -18,7 +18,7 @@ def rollback():
     os.system("zops_agentd start")
     os.system("systemctl start nginx.service")
 
-    print("Rollback completed. The old version has been restored.")
+    logging.error("Rollback completed. The old version has been restored.")
 
 if __name__ == "__main__":
     rollback()

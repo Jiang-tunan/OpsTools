@@ -1,25 +1,30 @@
 import os
 import subprocess
+import logging
 
 def start_services():
     # 启动nginx服务
     # try:
     #     subprocess.run(["systemctl", "start", "nginx.service"], check=True)
-    #     print("Nginx service started successfully.")
+    #     logging.info("Nginx 服务成功启动。", extra={"code": "200"})
     # except subprocess.CalledProcessError:
-    #     print("Error starting Nginx service.")
+    #     logging.error("启动 Nginx 服务出错。", extra={"code": "500"})
+    #     return False
 
     # 启动zops_server
     try:
         subprocess.run(["zops_server", "start"], check=True)
-        print("zops_server started successfully.")
+        logging.info("zops_server 服务成功启动...", extra={"code": "200"})
     except subprocess.CalledProcessError:
-        print("Error starting zops_server.")
+        logging.error("启动 zops_server 服务出错...", extra={"code": "500"})
+        return False
 
     # 启动zops_agentd
     # try:
     #     subprocess.run(["zops_agentd", "start"], check=True)
-    #     print("zops_agentd started successfully.")
+    #     logging.info("zops_agentd 服务成功启动。", extra={"code": "200"})
     # except subprocess.CalledProcessError:
-    #     print("Error starting zops_agentd.")
+    #     logging.error("启动 zops_agentd 服务出错。", extra={"code": "500"})
+    #     return False
 
+    return True
