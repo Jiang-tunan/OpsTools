@@ -5,8 +5,14 @@
       <sshConfig authType="PASSWORD" host="192.168.31.24" id="882145b2-dd62-418d-9b64-e3fe835d983c" port="22" customName="24-zhul" nameFormat="CUSTOM" username="zhul" useOpenSSHConfig="true">
         <option name="customName" value="24-zhul" />
       </sshConfig>
-      <sshConfig authType="PASSWORD" host="192.168.31.24" id="b08e911d-ae7e-429f-9812-c05623d3cade" port="22" customName="24-root" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+      <sshConfig authType="PASSWORD" connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="192.168.31.24" id="b08e911d-ae7e-429f-9812-c05623d3cade" port="22" customName="24-root" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
         <option name="customName" value="24-root" />
+      </sshConfig>
+      <sshConfig authType="PASSWORD" host="192.168.31.23" id="584b1299-64fb-49e5-9a11-9be10feb7952" port="22" customName="23-zhul" nameFormat="CUSTOM" username="zhul" useOpenSSHConfig="true">
+        <option name="customName" value="23-zhul" />
+      </sshConfig>
+      <sshConfig authType="PASSWORD" host="192.168.31.23" id="da6f9362-c21a-48e2-9ed2-0756b0cac031" port="22" customName="23-root" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+        <option name="customName" value="23-root" />
       </sshConfig>
     </configs>
   </component>

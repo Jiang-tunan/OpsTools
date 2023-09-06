@@ -36,7 +36,7 @@ def copy(src, dst):
     return True
 
 def deploy_executables(SOURCE_DIR, PROGRAM):
-    """从 /test/zops-upgrade/zops-server_version 中复制指定的文件夹和文件到output"""
+    """从 /package/zops-upgrade/zops-server_version 中复制指定的文件夹和文件到output"""
     # 删除output目录下的指定文件和文件夹
     for d in dirs:
         if not delete_file_or_directory(os.path.join(PROGRAM, d)):

@@ -11,7 +11,7 @@ def rollback():
     shutil.rmtree("output/zops-server")
 
     # 从备份恢复旧版本
-    shutil.copytree("backup/zops-server", "test/zops-server")
+    shutil.copytree("backup/zops-server", "package/zops-server")
 
     # 启动旧版本的服务
     os.system("zops_server start")

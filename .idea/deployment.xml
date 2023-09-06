@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" exclude=".svn;.cvs;.idea;.DS_Store;.git;.hg;*.hprof;*.pyc;README.md;.gitgnore;" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" createEmptyFolders="true" exclude=".svn;.cvs;.idea;.DS_Store;.git;.hg;*.hprof;*.pyc;README.md;.gitgnore" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="23-root">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/update" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="23-zhul">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/Version-upgrade" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="24-root">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/py" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="24-zhul">
         <serverdata>
           <mappings>

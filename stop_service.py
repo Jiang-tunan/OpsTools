@@ -32,8 +32,8 @@ def stop_services():
         logging.error("停止 zops_server 服务失败。", extra={"code": "500"})
         return False
 
-    # if not stop_zops_service('zops_agentd'):
-    #     logging.error("停止 zops_agentd 服务失败。", extra={"code": "500"})
-    #     return False
+    if not stop_zops_service('zops_agentd'):
+        logging.error("停止 zops_agentd 服务失败。", extra={"code": "500"})
+        return False
 
     return True

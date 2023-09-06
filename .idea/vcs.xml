@@ -2,6 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/test/zops_1.0.0/zops-server_1.0.0/h5php" vcs="Git" />
   </component>
 </project>

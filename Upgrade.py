@@ -1,6 +1,8 @@
 import argparse
 import os
 import logging
+import subprocess
+
 from verify_checksum import verify_checksum
 from stop_service import stop_services
 from backup_executable import backup_executable
@@ -65,6 +67,7 @@ def main(args):
 if __name__ == "__main__":
 
     log_init()
+    logging.info("启动升级...", extra={"code": "200"})
 
     parser = argparse.ArgumentParser(description="zops升级脚本")
     parser.add_argument("installation_package_path", type=str, help="安装包路径")
@@ -74,21 +77,34 @@ if __name__ == "__main__":
     # 检查路径是否存在
     if not os.path.exists(args.installation_package_path):
         logging.error(f"提供的安装包路径不存在: {args.installation_package_path}", extra={"code": "500"})
+        logging.error("升级失败!", extra={"code": "500"})
         exit(-1)
 
     if not os.path.exists(args.program):
         logging.error(f"提供的旧程序路径不存在: {args.program}", extra={"code": "500"})
+        logging.error("升级失败!", extra={"code": "500"})
         exit(-1)
 
     if not os.path.exists(args.backup_dir):
         logging.error(f"提供的备份目录不存在: {args.backup_dir}", extra={"code": "500"})
+        logging.error("升级失败!", extra={"code": "500"})
         exit(-1)
 
-    logging.info("启动升级...", extra={"code": "200"})
+    logging.info("检查路径成功!", extra={"code": "200"})
+
     if not main(args):
         logging.error("升级失败!", extra={"code": "500"})
     else:
         logging.info("成功完成升级!", extra={"code": "201"})
-    # 清理缓存
-    # os.system("./clean.sh")
+
+    # # 获取当前脚本的目录 构建clean.sh的绝对路径
+    # upgrade_dir = os.path.dirname(os.path.abspath(__file__))
+    # clean_path = os.path.join(upgrade_dir, "clean.sh")
+    #
+    # # 清理缓存
+    # clean_msg = subprocess.run([clean_path, f"{args.installation_package_path}/zops-upgrade", args.backup_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    # if clean_msg.stdout:
+    #     logging.info(clean_msg.stdout.strip(), extra={"code": "200"})
+    # if clean_msg.stderr:
+    #     logging.error(clean_msg.stderr.strip(), extra={"code": "500"})
     exit(0)
