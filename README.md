@@ -17,7 +17,7 @@ python3 Upgrade.py [installation_package_path] [program] [backup_dir]
 2. 状态码:
     - 200 升级正常进行
     - 201 升级完成
-    - 500 错误
+    - 500 升级出错停止
 3. 提示信息:
 4. 结束符: '##'
 ### 2.3 示例:

@@ -5,6 +5,8 @@ import logging
 
 def backup_directory(source_path, backup_path):
     """备份指定目录到备份路径"""
+
+    source_path = os.path.normpath(source_path)
     # 检查备份目录是否存在，如果不存在则创建
     if not os.path.exists(backup_path):
         try:
@@ -46,9 +48,9 @@ def backup_directory(source_path, backup_path):
     return True
 
 
-def backup_executable(SOURCE_DIR, BACKUP_DIR):
-    if not backup_directory(SOURCE_DIR, BACKUP_DIR):
-        logging.error(f"{SOURCE_DIR} 备份失败", extra={"code": "500"})
+def backup_executable(PROGRAM, BACKUP_DIR):
+    if not backup_directory(PROGRAM, BACKUP_DIR):
+        logging.error(f"{PROGRAM} 备份失败", extra={"code": "500"})
         return False
-    logging.info(f"{SOURCE_DIR} 备份完成，备份到 {BACKUP_DIR}", extra={"code": "200"})
+    logging.info(f"{PROGRAM} 备份完成，备份到 {BACKUP_DIR}", extra={"code": "200"})
     return True

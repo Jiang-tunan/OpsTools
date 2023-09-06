@@ -11,6 +11,9 @@ from start_service import start_services
 from monitor_service import monitor_services
 from log import log_init
 
+# 解压路径
+BASE_UNPACK_DIR="/home/project/Version-upgrade/unpack" #BASE_
+
 def main(args):
     # 使用命令行参数
     INSTALLATION_PACKAGE_PATH = args.installation_package_path
@@ -18,7 +21,7 @@ def main(args):
     BACKUP_DIR = args.backup_dir
 
     # 1. 校验MD5
-    SOURCE_DIR = verify_checksum(INSTALLATION_PACKAGE_PATH)
+    SOURCE_DIR = verify_checksum(INSTALLATION_PACKAGE_PATH, BASE_UNPACK_DIR)
     if SOURCE_DIR:
         logging.info(f"验证成功! SERVER_DIR: {SOURCE_DIR}", extra={"code": "200"})
     else:
@@ -33,7 +36,7 @@ def main(args):
         logging.info("成功停止服务!", extra={"code": "200"})
 
     # 3. 备份旧版本可执行程序
-    if not backup_executable(SOURCE_DIR, BACKUP_DIR):
+    if not backup_executable(PROGRAM, BACKUP_DIR):
         logging.error(" 备份可执行程序失败，退出...", extra={"code": "500"})
         return False
     else:
@@ -92,19 +95,28 @@ if __name__ == "__main__":
 
     logging.info("检查路径成功!", extra={"code": "200"})
 
+    # 对路径规范化
+    args.installation_package_path = os.path.abspath(args.installation_package_path)
+    args.program = os.path.abspath(args.program)
+    args.backup_dir = os.path.abspath(args.backup_dir)
+    args.installation_package_path = os.path.normpath(args.installation_package_path)
+    args.program = os.path.normpath(args.program)
+    args.backup_dir = os.path.normpath(args.backup_dir)
+
+    # 启动升级
     if not main(args):
         logging.error("升级失败!", extra={"code": "500"})
     else:
         logging.info("成功完成升级!", extra={"code": "201"})
 
-    # # 获取当前脚本的目录 构建clean.sh的绝对路径
-    # upgrade_dir = os.path.dirname(os.path.abspath(__file__))
-    # clean_path = os.path.join(upgrade_dir, "clean.sh")
-    #
-    # # 清理缓存
-    # clean_msg = subprocess.run([clean_path, f"{args.installation_package_path}/zops-upgrade", args.backup_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-    # if clean_msg.stdout:
-    #     logging.info(clean_msg.stdout.strip(), extra={"code": "200"})
-    # if clean_msg.stderr:
-    #     logging.error(clean_msg.stderr.strip(), extra={"code": "500"})
+    # 获取当前脚本的目录 构建clean.sh的绝对路径
+    upgrade_dir = os.path.dirname(os.path.abspath(__file__))
+    clean_path = os.path.join(upgrade_dir, "clean.sh")
+
+    # 清理缓存
+    clean_msg = subprocess.run([clean_path, f"{BASE_UNPACK_DIR}", args.backup_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    if clean_msg.stdout:
+        logging.info(clean_msg.stdout.strip(), extra={"code": "200"})
+    if clean_msg.stderr:
+        logging.error(clean_msg.stderr.strip(), extra={"code": "500"})
     exit(0)

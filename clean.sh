@@ -16,7 +16,7 @@ clean() {
     # 检查PACKAGE_PATH是否存在，如果存在则删除
     if [ -d "$PACKAGE_PATH" ]; then
         echo "Deleting $PACKAGE_PATH..."
-        rm -rf $PACKAGE_PATH
+        rm -rf $PACKAGE_PATH/*
     else
         echo "$PACKAGE_PATH does not exist."
     fi
