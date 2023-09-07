@@ -30,7 +30,7 @@ python3 Upgrade.py [installation_package_path] [program] [backup_dir]
 ## 3. 目前使用的路径
 ```shell
 # 升级脚本路径
-Upgrade.py: /usr/local/zops-server/bin/py/Upgrade.py
+upgrade.py: /usr/local/zops-server/bin/py/upgrade.py
 
 # 升级包路径 *zops-upgrade.tar.gz 必须指定安装包名字*
 installation_package_path: /usr/local/zops-server/upgrade/zops-upgrade.tar.gz
@@ -53,3 +53,19 @@ backup_dir: /usr/local/zops-server/upgrade/backup/
     - 请检查 zops-agentd 是否处于运行状态: `zops_agentd status`
     - 如果显示`zops_agentd is stopped`, 请启动 zops-agentd: `zops_agentd start`
     - 如果显示`zops_agentd is running`, 则当前用户没用权限操作 zops-agentd, 请切换到 zops-agentd 用户执行命令
+### 4.2 自动打包升级包脚本
+```shell
+# 脚本所在目录
+cd /home/zhul/upgrade
+
+# 脚本名 create_upgrade_package.sh
+./create_upgrade_package.sh [version]
+
+#  示例:
+./create_upgrade_package.sh 3.14
+
+# 生成升级包在当前路径下
+[zhul@dev-02 upgrade]$ ls
+create_upgrade_package.sh  zops-upgrade-3.14.tar.gz
+
+````

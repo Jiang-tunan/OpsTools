@@ -1,7 +1,14 @@
 import os
 import shutil
+import stat
 import tarfile
 import logging
+
+def ignore_files_and_folders(folder, filenames):
+    ignored = [name for name in filenames if os.path.exists(os.path.join(folder, name)) and stat.S_ISSOCK(os.stat(os.path.join(folder, name)).st_mode)]
+    if 'upgrade' in filenames:
+        ignored.append('upgrade')
+    return ignored
 
 def backup_directory(source_path, backup_path):
     """备份指定目录到备份路径"""
@@ -28,9 +35,9 @@ def backup_directory(source_path, backup_path):
             logging.error(f"删除已存在的备份子目录失败: {e}", extra={"code": "500"})
             return False
 
-    # 然后复制源目录的内容到这个子目录中
+    # 然后复制源目录的内容到这个子目录中，忽略UNIX套接字文件和upgrade文件夹
     try:
-        shutil.copytree(source_path, backup_subdir)
+        shutil.copytree(source_path, backup_subdir, ignore=ignore_files_and_folders)
         logging.info(f"成功复制源目录到备份子目录: {backup_subdir}", extra={"code": "200"})
     except OSError as e:
         logging.error(f"复制源目录到备份子目录失败: {e}", extra={"code": "500"})
@@ -46,7 +53,6 @@ def backup_directory(source_path, backup_path):
         return False
 
     return True
-
 
 def backup_executable(PROGRAM, BACKUP_DIR):
     if not backup_directory(PROGRAM, BACKUP_DIR):
