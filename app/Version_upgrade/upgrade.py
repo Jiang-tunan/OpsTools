@@ -12,7 +12,7 @@ import time
 # 解压路径
 BASE_UNPACK_DIR="/usr/local/zops-server/upgrade/unpack" #BASE_
 
-"""log.py"""
+"""mylog.py"""
 class CustomFormatter(logging.Formatter):
     def formatTime(self, record, datefmt=None):
         return str(int(time.time()))
@@ -41,7 +41,7 @@ def log_init():
 
     # 删除默认的FileHandler
     logger.removeHandler(logger.handlers[0])
-"""log.py ********** end * """
+"""mylog.py ********** end * """
 
 """"verify_checksum.py"""
 # 需检测文件及文件夹
@@ -235,7 +235,9 @@ def backup_executable(PROGRAM, BACKUP_DIR):
 
 dirs = ["h5", "h5php", "sbin"]
 executables = ["zops_agentd", "zops_proxy", "zops_server"]
-ignore_subpaths = ["h5php/conf"]
+
+# 忽略项
+ignore_subpaths = ["h5php/conf", "h5/net.config.js"]
 
 def should_ignore(path):
     """检查路径是否应该被忽略"""
@@ -469,7 +471,7 @@ if __name__ == "__main__":
     clean_path = os.path.join(upgrade_dir, "clean.sh")
 
     # # 清理缓存
-    subprocess.run([clean_path, f"{BASE_UNPACK_DIR}", args.backup_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    # subprocess.run([clean_path, f"{BASE_UNPACK_DIR}", args.backup_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     # if clean_msg.stdout:
     #     logging.info(clean_msg.stdout.strip(), extra={"code": "200"})
     # if clean_msg.stderr:

@@ -4,7 +4,7 @@ import logging
 
 dirs = ["h5", "h5php", "sbin"]
 executables = ["zops_agentd", "zops_proxy", "zops_server"]
-ignore_subpaths = ["h5php/conf"]
+ignore_subpaths = ["h5php/conf", "h5/net.config.js"]
 
 def should_ignore(path):
     """检查路径是否应该被忽略"""
