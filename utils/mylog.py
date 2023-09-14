@@ -3,9 +3,6 @@ import os
 import time
 
 # 设置日志配置
-class CustomFormatter(logging.Formatter):
-    def formatTime(self, record, datefmt=None):
-        return str(int(time.time()))
 
 
 def log_init():
