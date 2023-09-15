@@ -11,24 +11,24 @@ class TestQueryStringParsing(unittest.TestCase):
     def test_parse_query_string(self):
         test_query = "?DBName=zabbix_v2&DBUser=zabbix_v2&DBPassword=zbx12345."
         expected_result = {
-            "DBName": "zabbix_v2",
+            "DBName": "zabbix_v23",
             "DBUser": "zabbix_v2",
             "DBPassword": "zbx12345"
         }
-        print(parse_query_string(test_query))
-        self.assertEqual(parse_query_string(test_query), expected_result)
+        # print(parse_query_string(test_query))
+        self.assertEqual(parse_query_string(test_query), expected_result, msg="测试 用例1 失败")
 
-    # def test_empty_query_string(self):
-    #     test_query = ""
-    #     expected_result = {}
-    #
-    #     self.assertEqual(parse_and_validate_query_string(test_query), expected_result)
-    #
-    # def test_single_parameter(self):
-    #     test_query = "DBName=zabbix_v2"
-    #     expected_result = {"DBName": "zabbix_v2"}
-    #
-    #     self.assertEqual(parse_and_validate_query_string(test_query), expected_result)
+    def test_empty_query_string(self):
+        test_query = "?."
+        expected_result = {}
+        # print(parse_query_string(test_query))
+        self.assertEqual(parse_query_string(test_query), expected_result, msg="Query string parsing failed.")
+
+    def test_single_parameter(self):
+        test_query = "?DBName=zabbix_v2."
+        expected_result = {"DBName": "zabbix_v2"}
+        # print(parse_query_string(test_query))
+        self.assertEqual(parse_query_string(test_query), expected_result)
 
 class TestModifyConf(unittest.TestCase):
     def test_modify_conf(self):
@@ -40,7 +40,6 @@ class TestModifyConf(unittest.TestCase):
         }
         modify_conf_file(test_file, params, OUTPUTS_DIR)
 
-        # 以下可以添加更多的断言，验证outputs目录下的文件内容是否如您所期望
 
 if __name__ == '__main__':
     unittest.main()

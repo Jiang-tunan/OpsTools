@@ -1,64 +1,75 @@
-import logging
 import os
-from urllib.parse import parse_qs
+import logging
 
-def is_valid_key_or_value(string):
-    """
-    检查字符串是否为合法的键名或值。合法字符包括字母、数字和下划线。
-    """
-    return all(c.isalnum() or c == '_' for c in string)
+#  测试用例输出目录
+OUTPUTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../tests', 'outputs')
 
 
-def parse_query_string(query_string):
+def parse_query_string(query_string, file_type):
     """
-    解析并验证查询字符串
+    根据不同文件类型解析查询字符串
 
-    :param query_string: 输入的查询字符串，如 "?DBName=zabbix_v2&DBUser=zabbix_v2&DBPassword=zbx@12345."
-    :return: 如果查询字符串有效，返回参数字典。否则返回一个空字典和错误消息。
+    :param query_string: 输入的查询字符串
+    :param file_type: 文件的类型，如 ".conf" 或 ".php"
+    :return: 如果查询字符串有效，返回参数字典。否则返回一个空字典。
     """
+    params = {}
+
     # 确保查询字符串以 "?" 符号开头
     if not query_string.startswith("?"):
-        print("输入应该以问号开头")
+        logging.error("输入应该以问号开头")
         return {}
+
     # 去除开头的问号
     query_string = query_string[1:]
 
-    # 确保查询字符串以点号结束
-    if not query_string.endswith("."):
-        print("输入应该以点号结尾")
+    # 确保查询字符串以分号结束
+    if not query_string.endswith(";"):
+        logging.error("输入应该以分号结束")
         return {}
 
-    # 使用 "&" 符号分割查询字符串以获取键值对
-    parameters = query_string[:-1].split("&")  # 去除末尾的点号再分割
-    params = {}
+    # 去掉结尾的分号
+    query_string = query_string[:-1]
 
-    for param in parameters:
-        # 检查参数是否包含 '=' 符号
-        if "=" not in param:
-            print(f"参数 {param} 格式不正确")
-            return {}
+    # 根据"&"或";"分割查询字符串，获取键值对
+    kv_pairs = query_string.split("&") if file_type == '.conf' else query_string.split(";")
 
-        key, value = param.split("=")
+    # 如果是.conf文件
+    if file_type == '.conf':
+        for kv in kv_pairs:
+            if '=' in kv:
+                key, value = kv.split('=')
+                params[key] = value
 
-        # 检查键名和值的合法性
-        if not is_valid_key_or_value(key) or not is_valid_key_or_value(value):
-            print(f"参数 {param} 格式不正确")
-            return {}
+    # 如果是.php文件
+    elif file_type == '.php':
+        for kv in kv_pairs:
+            if '=' in kv:
+                key, value = kv.split('=', 1)
+                # 将 "DB.TYPE" 转换为 "DB['TYPE']"
+                key = key.replace('.', "['") + "']"
+                params[key] = value
 
-        params[key] = value
-    print("参数验证通过")
     return params
 
-def modify_conf_file(filepath, params, output_dir='outputs'):
-    with open(filepath, 'r') as file:
-        lines = file.readlines()
+
+def modify_conf_file(filepath, params, output_dir):
+    try:
+        with open(filepath, 'r') as file:
+            lines = file.readlines()
+    except (FileNotFoundError, PermissionError) as e:
+        logging.error(f"读取配置文件错误: {e}")
+        return False
 
     new_lines = []
     for line in lines:
         stripped_line = line.strip()
         if "=" in stripped_line and not stripped_line.startswith("#"):
-            key = stripped_line.split("=")[0].strip()
+            key = stripped_line.split("=", 1)[0].strip()  # 仅拆分第一个等号
             if key in params:
+                logging.info(f"将配置文件 {filepath} 中键名为 {key} 的值修改为 {params[key]}")
+                line_ep = line.replace('\n', '')
+                logging.info(f"{line_ep} --> {key}={params[key]}")
                 line = f"{key}={params[key]}\n"
         new_lines.append(line)
 
@@ -66,29 +77,88 @@ def modify_conf_file(filepath, params, output_dir='outputs'):
     filename = os.path.basename(filepath)
 
     # 在 outputs 目录下创建新文件
+    logging.info(f"创建新配置文件test_{filename} 到 {output_dir}")
     new_filepath = os.path.join(output_dir, "test_" + filename)
 
-    # 将修改后的内容写入新文件
-    with open(new_filepath, 'w') as file:
-        file.writelines(new_lines)
-    print(f"配置文件 {filename} 已修改放入 {new_filepath}")
+    try:
+        # 将修改后的内容写入新文件
+        with open(new_filepath, 'w') as file:
+            file.writelines(new_lines)
+    except (IOError, PermissionError) as e:
+        logging.error(f"写入新配置文件错误: {e}")
+        return False
 
+    logging.info(f"配置文件 {filename} 已修改放入 {new_filepath}")
+    return True
 
+def modify_php_conf_file(filepath, params, output_dir):
+    try:
+        with open(filepath, 'r') as file:
+            lines = file.readlines()
+    except (FileNotFoundError, PermissionError) as e:
+        logging.error(f"读取配置文件错误: {e}")
+        return False
+
+    new_lines = []
+    for line in lines:
+        stripped_line = line.strip()
+        # 查找简单的键值对配置项
+        if "= '" in stripped_line and stripped_line.startswith("$"):
+            key = stripped_line.split("= '")[0].split("$")[1]
+            if key in params:
+                logging.info(f"将配置文件 {filepath} 中键名为 {key} 的值修改为 {params[key]}")
+                line_ep = line.replace('\n', '')
+                logging.info(f"{line_ep} --> ${key} = '{params[key]}';")
+                line = f"${key} = '{params[key]}';\n"
+        new_lines.append(line)
+
+    # 获取源文件名
+    filename = os.path.basename(filepath)
+
+    # 在 outputs 目录下创建新文件
+    logging.info(f"创建新配置文件test_{filename} 到 {output_dir}")
+    new_filepath = os.path.join(output_dir, "test_" + filename)
+
+    try:
+        # 将修改后的内容写入新文件
+        with open(new_filepath, 'w') as file:
+            file.writelines(new_lines)
+    except (IOError, PermissionError) as e:
+        logging.error(f"写入新配置文件错误: {e}")
+        return False
+
+    return True
 
 
 def modify_profile(file, modify):
-    print("开始修改配置文件")
-    # print(file,  modify)
+    file_extension = os.path.splitext(file)[1]  # 获取文件后缀
+
+    if file_extension not in ['.conf', '.php']:
+        logging.error(f"不支持的文件类型：{file_extension}")
+        logging.error("进程已结束, 退出代码 -1")
+        exit(-1)
 
     if not os.path.exists(file):
-        print(f"配置文件不存在，请检查路径：{file}")
+        logging.error(f"配置文件不存在，请检查路径：{file}")
+        logging.error("进程已结束, 退出代码 -1")
         exit(-1)
 
-    if {} == parse_query_string(modify):
-        print(f"参数格式不正确，请检查：{modify}")
+    params = parse_query_string(modify, file_extension)
+    if not params:  # 直接检查是否为空字典
+        logging.error(f"参数格式不正确，请检查：{modify}")
+        logging.error("进程已结束, 退出代码 -1")
         exit(-1)
 
-    modify_conf_file(file, parse_query_string(modify))
+    logging.info(f"将{params}参数写入配置文件{file}")
+    if file_extension == '.conf':
+        if not modify_conf_file(file, params, OUTPUTS_DIR):
+            logging.error(f"配置文件{file}写入失败")
+            logging.error("进程已结束, 退出代码 -1")
+            exit(-1)
+    elif file_extension == '.php':
+        if not modify_php_conf_file(file, params, OUTPUTS_DIR):
+            logging.error(f"配置文件{file}写入失败")
+            logging.error("进程已结束, 退出代码 -1")
+            exit(-1)
 
-
-
+    logging.info(f"配置文件 {file} 修改完成")

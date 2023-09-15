@@ -9,7 +9,7 @@ $DB['USER']			= 'zops';
 $DB['PASSWORD']			= 'Zbx@666888';
 
 // Schema name. Used for PostgreSQL.
-$DB['SCHEMA']			= '';
+ 			= '';
 
 // Used for TLS connection.
 $DB['ENCRYPTION']		= false;

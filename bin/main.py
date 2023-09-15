@@ -1,10 +1,10 @@
 import sys
 import os
 import argparse
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.modify_profile import modify_conf
-from utils import mylog
+from utils.mylog import log_init
+
 
 def main():
     parser = argparse.ArgumentParser(description="Main entry point for the project.")
@@ -18,9 +18,10 @@ def main():
 
     # 根据参数选择要调用的函数
     if args.file and args.modify:
+        log_init(script_name='modify_profile')
         modify_conf.modify_profile(args.file, args.modify)
 # 添加其他条件分支...
 
+
 if __name__ == "__main__":
-    mylog.log_init()
     main()
