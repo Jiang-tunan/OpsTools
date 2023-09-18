@@ -31,8 +31,8 @@ def parse_query_string(query_string, file_type):
     # 去掉结尾的分号
     query_string = query_string[:-1]
 
-    # 根据"&"或";"分割查询字符串，获取键值对
-    kv_pairs = query_string.split("&") if file_type == '.conf' else query_string.split(";")
+    # 根据"&"分割查询字符串，获取键值对
+    kv_pairs = query_string.split("&")
 
     # 如果是.conf文件
     if file_type == '.conf':
@@ -47,7 +47,10 @@ def parse_query_string(query_string, file_type):
             if '=' in kv:
                 key, value = kv.split('=', 1)
                 # 将 "DB.TYPE" 转换为 "DB['TYPE']"
-                key = key.replace('.', "['") + "']"
+                if '.' in kv:
+                    key = key.replace('.', "['") + "']"
+                else:
+                    key = key
                 params[key] = value
 
     return params
@@ -93,7 +96,7 @@ def modify_conf_file(filepath, params, output_dir):
 
 def modify_php_conf_file(filepath, params, output_dir):
     try:
-        with open(filepath, 'r') as file:
+        with open(filepath, 'r', encoding='utf-8') as file:
             lines = file.readlines()
     except (FileNotFoundError, PermissionError) as e:
         logging.error(f"读取配置文件错误: {e}")
@@ -102,15 +105,16 @@ def modify_php_conf_file(filepath, params, output_dir):
     new_lines = []
     for line in lines:
         stripped_line = line.strip()
-        # 查找简单的键值对配置项
-        if "= '" in stripped_line and stripped_line.startswith("$"):
-            key = stripped_line.split("= '")[0].split("$")[1]
+        if "= " in stripped_line and stripped_line.startswith("$"):
+            key_end_index = stripped_line.find("=")
+            key = stripped_line[1:key_end_index].strip()  # 使用[1:]来跳过开头的$
             if key in params:
                 logging.info(f"将配置文件 {filepath} 中键名为 {key} 的值修改为 {params[key]}")
                 line_ep = line.replace('\n', '')
-                logging.info(f"{line_ep} --> ${key} = '{params[key]}';")
-                line = f"${key} = '{params[key]}';\n"
+                logging.info(f"{line_ep} --> ${key} = {params[key]};")
+                line = line.replace(stripped_line.split('=')[1].strip(), f"{params[key]};")
         new_lines.append(line)
+
 
     # 获取源文件名
     filename = os.path.basename(filepath)
@@ -121,7 +125,7 @@ def modify_php_conf_file(filepath, params, output_dir):
 
     try:
         # 将修改后的内容写入新文件
-        with open(new_filepath, 'w') as file:
+        with open(new_filepath, 'w', encoding='utf-8') as file:
             file.writelines(new_lines)
     except (IOError, PermissionError) as e:
         logging.error(f"写入新配置文件错误: {e}")
@@ -148,6 +152,10 @@ def modify_profile(file, modify):
         logging.error(f"参数格式不正确，请检查：{modify}")
         logging.error("进程已结束, 退出代码 -1")
         exit(-1)
+
+    # 打印 params 值
+    for key, value in params.items():
+        logging.info(f"{key} = {value}")
 
     logging.info(f"将{params}参数写入配置文件{file}")
     if file_extension == '.conf':
