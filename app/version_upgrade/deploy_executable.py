@@ -2,9 +2,12 @@ import os
 import shutil
 import logging
 
-dirs = ["h5", "h5php", "sbin"]
+dirs = ["h5", "h5bg", "sbin"]
 executables = ["zops_agentd", "zops_proxy", "zops_server"]
-ignore_subpaths = ["h5php/conf", "h5/net.config.js"]
+
+# 忽略项
+ignore_subpaths = ["h5bg/conf", "h5/net.config.js"]
+
 
 def should_ignore(path):
     """检查路径是否应该被忽略"""
@@ -13,6 +16,7 @@ def should_ignore(path):
             logging.info(f"忽略 {path}", extra={"code": "200"})
             return True
     return False
+
 
 def delete_file_or_directory(path):
     """删除文件或目录"""
@@ -32,6 +36,7 @@ def delete_file_or_directory(path):
             return False
     return True
 
+
 def copy(src, dst):
     """复制文件或目录"""
     if os.path.exists(src) and not should_ignore(src):
@@ -49,6 +54,7 @@ def copy(src, dst):
             logging.error(f"复制 {src} 到 {dst} 失败: {e}", extra={"code": "500"})
             return False
     return True
+
 
 def deploy_executables(SOURCE_DIR, PROGRAM):
     """从 /package/zops-upgrade/zops-server_version 中复制指定的文件夹和文件到output"""

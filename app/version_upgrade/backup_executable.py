@@ -4,11 +4,14 @@ import stat
 import tarfile
 import logging
 
+
 def ignore_files_and_folders(folder, filenames):
-    ignored = [name for name in filenames if os.path.exists(os.path.join(folder, name)) and stat.S_ISSOCK(os.stat(os.path.join(folder, name)).st_mode)]
+    ignored = [name for name in filenames if os.path.exists(os.path.join(folder, name)) and stat.S_ISSOCK(
+        os.stat(os.path.join(folder, name)).st_mode)]
     if 'upgrade' in filenames:
         ignored.append('upgrade')
     return ignored
+
 
 def backup_directory(source_path, backup_path):
     """备份指定目录到备份路径"""
@@ -47,16 +50,19 @@ def backup_directory(source_path, backup_path):
     try:
         with tarfile.open(os.path.join(backup_path, os.path.basename(source_path) + ".tar.gz"), "w:gz") as tar:
             tar.add(source_path, arcname=os.path.basename(source_path))
-        logging.info(f"成功创建压缩文件: {os.path.join(backup_path, os.path.basename(source_path) + '.tar.gz')}", extra={"code": "200"})
+        logging.info(f"成功创建压缩文件: {os.path.join(backup_path, os.path.basename(source_path) + '.tar.gz')}",
+                     extra={"code": "200"})
     except Exception as e:
         logging.error(f"创建压缩文件失败: {e}", extra={"code": "500"})
         return False
 
     return True
 
+
 def backup_executable(PROGRAM, BACKUP_DIR):
     if not backup_directory(PROGRAM, BACKUP_DIR):
         logging.error(f"{PROGRAM} 备份失败", extra={"code": "500"})
         return False
     logging.info(f"{PROGRAM} 备份完成，备份到 {BACKUP_DIR}", extra={"code": "200"})
+
     return True

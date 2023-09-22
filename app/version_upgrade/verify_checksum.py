@@ -3,13 +3,15 @@ import hashlib
 import logging
 
 # 需检测文件及文件夹
-dirs = ["h5", "h5php", "sbin"]
+dirs = ["h5", "h5bg", "sbin"]
 executables = ["zops_agentd", "zops_java", "zops_proxy", "zops_server"]
+
 
 def calculate_md5(file_path):
     """计算文件的MD5值"""
     with open(file_path, 'rb') as f:
         return hashlib.md5(f.read()).hexdigest()
+
 
 def verify_files_and_dirs(base_dir):
     """验证必要的文件和目录是否存在"""
@@ -28,6 +30,7 @@ def verify_files_and_dirs(base_dir):
             logging.info(f"可执行文件 {exe} 存在!", extra={"code": "200"})
 
     return True
+
 
 def verify_checksum(INSTALLATION_PACKAGE_PATH, BASE_UNPACK_DIR):
     """验证MD5值并返回SERVER_DIR的值"""

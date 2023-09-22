@@ -1,6 +1,7 @@
 import subprocess
 import logging
 
+
 def monitor_services():
     services = ["zops_server"]
 
@@ -29,4 +30,3 @@ def monitor_services():
             return False
 
     return True
-

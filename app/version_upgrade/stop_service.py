@@ -1,6 +1,7 @@
 import subprocess
 import logging
 
+
 def stop_systemctl_service(service_name):
     """使用systemctl命令停止服务"""
     logging.info(f"尝试停止服务 {service_name}...", extra={"code": "100"})  # 添加日志
@@ -17,6 +18,7 @@ def stop_systemctl_service(service_name):
     except Exception as e:
         logging.error(f"停止服务 {service_name} 时发生异常: {str(e)}", extra={"code": "500"})
         return False
+
 
 def stop_zops_service(service_name):
     """停止zops相关的服务"""

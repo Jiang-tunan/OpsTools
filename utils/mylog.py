@@ -16,7 +16,7 @@ def log_init(script_name=""):
     if script_name == 'modify_profile':
         log_format = '%(asctime)s - %(levelname)s - %(message)s'
     elif script_name == 'upgrade':
-        log_format = '%(asctime)s#%(code)s#%(message)s##'
+        log_upgrade_init(log_file)
     else:
         log_format = '%(asctime)s - %(levelname)s - %(message)s'
 
@@ -35,19 +35,32 @@ def log_init(script_name=""):
     logger.addHandler(file_handler)
     # logger.addHandler(console_handler)
     logger.setLevel(logging.DEBUG)
-
-    # # 删除日志文件并重新创建
-    # if os.path.exists(log_file_path):
-    #     os.remove(log_file_path)
-    #
-    # logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s#%(code)s#%(message)s##', datefmt='%s')
-    # logger = logging.getLogger()
-    #
-    # # 设置StreamHandler以禁用缓存
-    # handler = logging.StreamHandler(open(log_file_path, 'a', 1))  # 1 表示无缓冲
-    # handler.setFormatter(CustomFormatter('%(asctime)s#%(code)s#%(message)s##'))
-    # logger.addHandler(handler)
-    #
-    # # 删除默认的FileHandler
-    # logger.removeHandler(logger.handlers[0])
     print("log_init")
+
+
+def log_upgrade_init(log_file):
+    class CustomFormatter(logging.Formatter):
+        def formatTime(self, record, datefmt=None):
+            return str(int(time.time()))
+
+    # 清空日志文件内容
+    if os.path.exists(log_file):
+        with open(log_file, 'w'):
+            pass
+
+    # 设置日志文件权限为777
+    os.chmod(log_file, 0o777)
+
+    logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s#%(code)s#%(message)s##',
+                        datefmt='%s')
+    logger = logging.getLogger()
+
+    # 设置StreamHandler以禁用缓存
+    handler = logging.StreamHandler(open(log_file, 'a', 1))  # 1 表示无缓冲
+    handler.setFormatter(CustomFormatter('%(asctime)s#%(code)s#%(message)s##'))
+    logger.addHandler(handler)
+
+    # 删除默认的FileHandler
+    logger.removeHandler(logger.handlers[0])
+
+
