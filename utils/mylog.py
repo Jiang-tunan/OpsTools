@@ -46,7 +46,6 @@ def log_upgrade_init(log_file):
     # 清空日志文件内容
     if os.path.exists(log_file):
         with open(log_file, 'w'):
-            pass
 
     # 设置日志文件权限为777
     os.chmod(log_file, 0o777)
